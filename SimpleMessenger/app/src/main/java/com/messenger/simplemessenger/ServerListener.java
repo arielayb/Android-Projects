@@ -12,7 +12,6 @@ import java.net.Socket;
 
 public class ServerListener extends AsyncTask<ServerSocket, String, Void>
 {
-    private MainActivity mainActivity = new MainActivity();
 
     @Override
     protected Void doInBackground(ServerSocket...socket)
@@ -53,9 +52,11 @@ public class ServerListener extends AsyncTask<ServerSocket, String, Void>
 
     protected void onProgressUpdate(String... strings)
     {
+        MainActivity mainActivity = new MainActivity();
+
         //Steve Ko gave me some good advice about AsyncTask Threads
         //this will return the textview and make some more messages
-        mainActivity.setTextView((TextView) mainActivity.findViewById(R.id.textView1));
+        mainActivity.setTextView(mainActivity.findViewById(R.id.textView1));
         mainActivity.getTextView().append(strings[0] + "\n");
         return;
     }
