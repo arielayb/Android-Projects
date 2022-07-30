@@ -35,7 +35,21 @@ public class MainActivity extends AppCompatActivity {
     //string for numbers
     private String _portStr;
 
+    //server sock
+    ServerSocket _serverSock;
+
+    //class object
+    public MainActivity _mainActivity;
+
     private static final int READ_PHONE_STATE_CODE = 101;
+
+    public MainActivity(){
+    }
+
+    public MainActivity(TextView textView, ServerSocket serverSocket){
+        this._textView = textView;
+        this._serverSock = serverSocket;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,10 +60,12 @@ public class MainActivity extends AppCompatActivity {
         TelephonyManager tel = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         checkPermission(Manifest.permission.READ_PHONE_STATE, READ_PHONE_STATE_CODE);
 
-//        _portStr = tel.getLine1Number().substring(tel.getLine1Number().length() - 4);
+//        this._portStr = tel.getLine1Number().substring(tel.getLine1Number().length() - 4);
 
         //create the server socket
+        this._serverSock = null;
         ServerSocket serverSock = null;
+
         try
         {
             serverSock = new ServerSocket(10000);
@@ -59,11 +75,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //set up the edit text an text view
-        _textView = findViewById(R.id.textView1);
-        _editText = findViewById(R.id.editText1);
+//        this._textView = findViewById(R.id.textView1);
+//        this._editText = findViewById(R.id.editText1);
+
+        TextView textView = findViewById(R.id.textView1);
+        this._editText = findViewById(R.id.editText1);
+        this._mainActivity = new MainActivity(textView, serverSock);
 
         //call a asyncTask thread to start the Sender class
-        new ServerListener().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, serverSock);
+        new ServerListener().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, this._mainActivity);
 
     }
 
@@ -72,11 +92,11 @@ public class MainActivity extends AppCompatActivity {
     {
 
         //Include the editText so that we can edit the text and send it
-        _textSend = _editText.getText().toString() + "\n";
-        _editText.setText("");
+        this._textSend = this._editText.getText().toString() + "\n";
+        this._editText.setText("");
 
         //call a asyncTask thread to start the Client class
-        new ClientSocket().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, _portStr, _textSend);
+        new ClientSocket().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, this._portStr, this._textSend);
         return true;
     }
 
@@ -85,19 +105,17 @@ public class MainActivity extends AppCompatActivity {
      * @return
      */
     public TextView getTextView(){
-        return _textView;
+        return this._textView;
     }
 
-    public void setTextView(TextView textView){
-        this._textView = textView;
-    }
+    public void setTextView(final MainActivity ma, final String str){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ma._textView.append(str + "\n");
+            }
+        });
 
-    /**
-     * return the text message
-     * @return
-     */
-    public String getTextSend(){
-        return _textSend;
     }
 
     /**
@@ -158,4 +176,5 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        }
     }
+
 }

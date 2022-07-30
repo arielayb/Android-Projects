@@ -10,15 +10,17 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ServerListener extends AsyncTask<ServerSocket, String, Void>
+public class ServerListener extends AsyncTask<MainActivity, Void, Void>
 {
+    private MainActivity _mainActivity;
 
     @Override
-    protected Void doInBackground(ServerSocket...socket)
+    protected Void doInBackground(MainActivity... mainActivity)
     {
         try
         {
-            ServerSocket serverSock = socket[0];
+            this._mainActivity = mainActivity[0];
+            ServerSocket serverSock = this._mainActivity._serverSock;
 
             //need to pass the message
             String msg = null;
@@ -34,9 +36,10 @@ public class ServerListener extends AsyncTask<ServerSocket, String, Void>
 
                 //take in a string to read the message from the line
                 msg = in.readUTF();
-
+                this._mainActivity.setTextView(this._mainActivity, msg);
                 //gotta pass them all, Stringo-mons!
-                publishProgress(msg);
+//                publishProgress(msg);
+
 
                 //close the socket
                 clientSock.close();
@@ -48,16 +51,5 @@ public class ServerListener extends AsyncTask<ServerSocket, String, Void>
             e.printStackTrace();
         }
         return null;
-    }
-
-    protected void onProgressUpdate(String... strings)
-    {
-        MainActivity mainActivity = new MainActivity();
-
-        //Steve Ko gave me some good advice about AsyncTask Threads
-        //this will return the textview and make some more messages
-        mainActivity.setTextView(mainActivity.findViewById(R.id.textView1));
-        mainActivity.getTextView().append(strings[0] + "\n");
-        return;
     }
 }
