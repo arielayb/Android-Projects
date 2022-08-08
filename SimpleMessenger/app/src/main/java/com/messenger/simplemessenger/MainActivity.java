@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         TelephonyManager tel = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         checkPermission(Manifest.permission.READ_PHONE_STATE, READ_PHONE_STATE_CODE);
 
-//        this._portStr = tel.getLine1Number().substring(tel.getLine1Number().length() - 4);
+        this._portStr = tel.getLine1Number().substring(tel.getLine1Number().length() - 4);
 
         //create the server socket
         this._serverSock = null;
@@ -96,7 +96,8 @@ public class MainActivity extends AppCompatActivity {
         this._editText.setText("");
 
         //call a asyncTask thread to start the Client class
-        new ClientSocket().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, this._portStr, this._textSend);
+        new ClientSocket().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                        this._portStr, this._textSend);
         return true;
     }
 

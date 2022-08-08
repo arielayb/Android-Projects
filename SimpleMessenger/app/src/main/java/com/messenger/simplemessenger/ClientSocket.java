@@ -1,10 +1,12 @@
 package com.messenger.simplemessenger;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.logging.Logger;
 
 public class ClientSocket extends AsyncTask<String, Void, Void>
 {
